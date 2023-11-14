@@ -8,6 +8,13 @@ import android.content.Intent
 import android.os.Process
 import android.provider.Telephony
 import android.telephony.SmsMessage
+import android.telephony.SubscriptionInfo
+import android.telephony.SubscriptionManager
+import com.shounakmulay.telephony.sms.IncomingSmsHandler.backgroundChannel
+import com.shounakmulay.telephony.sms.IncomingSmsHandler.executeDartCallbackInBackgroundIsolate
+import com.shounakmulay.telephony.sms.IncomingSmsHandler.setBackgroundMessageHandle
+import com.shounakmulay.telephony.sms.IncomingSmsHandler.setBackgroundSetupHandle
+import com.shounakmulay.telephony.sms.IncomingSmsHandler.startBackgroundIsolate
 import com.shounakmulay.telephony.utils.Constants
 import com.shounakmulay.telephony.utils.Constants.HANDLE
 import com.shounakmulay.telephony.utils.Constants.HANDLE_BACKGROUND_MESSAGE
@@ -31,9 +38,8 @@ import io.flutter.embedding.engine.loader.FlutterLoader
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.FlutterCallbackInformation
-import java.util.*
+import java.util.Collections
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.collections.HashMap
 
 
 class IncomingSmsReceiver : BroadcastReceiver() {
@@ -44,10 +50,16 @@ class IncomingSmsReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent?) {
         ContextHolder.applicationContext = context.applicationContext
+        val extraDetailsMap = HashMap<String, Any?>()
+            extraDetailsMap["sub_id"] = intent?.extras?.get("subscription")
+            extraDetailsMap["slot_index"] = intent?.extras?.get("android.telephony.extra.SLOT_INDEX")
+            extraDetailsMap["format"] = intent?.extras?.get("format")
+            extraDetailsMap["message_id"] = intent?.extras?.get("messageId")
+
         val smsList = Telephony.Sms.Intents.getMessagesFromIntent(intent)
         val messagesGroupedByOriginatingAddress = smsList.groupBy { it.originatingAddress }
         messagesGroupedByOriginatingAddress.forEach { group ->
-            processIncomingSms(context, group.value)
+            processIncomingSms(context, group.value,extraDetailsMap)
         }
     }
 
@@ -61,8 +73,14 @@ class IncomingSmsReceiver : BroadcastReceiver() {
      * [IncomingSmsHandler.executeDartCallbackInBackgroundIsolate] with the SMS.
      *
      */
-    private fun processIncomingSms(context: Context, smsList: List<SmsMessage>) {
-        val messageMap = smsList.first().toMap()
+    private fun processIncomingSms(context: Context, smsList: List<SmsMessage>, extraDetails: HashMap<String, Any?>) {
+
+        val smsMap = smsList.first().toMap()
+        val messageMap = hashMapOf<String, Any?>().apply {
+            putAll(smsMap)
+            putAll(extraDetails)
+        }
+
         smsList.forEachIndexed { index, smsMessage ->
             if (index > 0) {
                 messageMap[MESSAGE_BODY] = (messageMap[MESSAGE_BODY] as String)

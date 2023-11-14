@@ -77,6 +77,9 @@ class _SmsProjections {
 //  static const int STATUS_PENDING = 32;
   static const String SUBJECT = "subject";
   static const String SUBSCRIPTION_ID = "sub_id";
+  static const String SLOT_INDEX = "slot_index";
+  static const String FORMAT = "format";
+  static const String MESSAGE_ID = "message_id";
   static const String THREAD_ID = "thread_id";
   static const String TYPE = "type";
 }

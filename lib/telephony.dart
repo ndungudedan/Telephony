@@ -575,6 +575,9 @@ class SmsMessage {
   SmsType? type;
   SmsStatus? status;
   String? serviceCenterAddress;
+  String? format;
+  int? slotIndex;
+  int? messageId;
 
   /// ## Do not call this method. This method is visible only for testing.
   @visibleForTesting
@@ -642,6 +645,15 @@ class SmsMessage {
         case _SmsProjections.SERVICE_CENTER_ADDRESS:
           this.serviceCenterAddress = value;
           break;
+        case _SmsProjections.SLOT_INDEX:
+          this.slotIndex = int.tryParse(value);
+          break;
+        case _SmsProjections.FORMAT:
+          this.format = value;
+          break;
+        case _SmsProjections.MESSAGE_ID:
+          this.messageId = int.tryParse(value);
+          break;
       }
     }
   }
@@ -660,7 +672,10 @@ class SmsMessage {
         this.subscriptionId == other.subscriptionId &&
         this.threadId == other.threadId &&
         this.type == other.type &&
-        this.status == other.status;
+        this.status == other.status &&
+        this.slotIndex == other.slotIndex &&
+        this.format == other.format &&
+        this.messageId == other.messageId;
   }
 }
 
