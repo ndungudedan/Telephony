@@ -151,6 +151,10 @@ const INCOMING_SMS_COLUMNS = [
   SmsColumn._(_SmsProjections.MESSAGE_BODY),
   SmsColumn._(_SmsProjections.TIMESTAMP),
   SmsColumn._(_SmsProjections.SERVICE_CENTER_ADDRESS),
+  SmsColumn._(_SmsProjections.SUBSCRIPTION_ID),
+  SmsColumn._(_SmsProjections.FORMAT),
+  SmsColumn._(_SmsProjections.SLOT_INDEX),
+  SmsColumn._(_SmsProjections.MESSAGE_ID),
   SmsColumn.STATUS
 ];
 

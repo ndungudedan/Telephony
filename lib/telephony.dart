@@ -632,7 +632,7 @@ class SmsMessage {
           this.subject = value;
           break;
         case _SmsProjections.SUBSCRIPTION_ID:
-          this.subscriptionId = int.tryParse(value);
+          this.subscriptionId = int.tryParse(value.toString());
           break;
         case _SmsProjections.THREAD_ID:
           this.threadId = int.tryParse(value);
@@ -646,13 +646,13 @@ class SmsMessage {
           this.serviceCenterAddress = value;
           break;
         case _SmsProjections.SLOT_INDEX:
-          this.slotIndex = int.tryParse(value);
+          this.slotIndex = value;
           break;
         case _SmsProjections.FORMAT:
           this.format = value;
           break;
         case _SmsProjections.MESSAGE_ID:
-          this.messageId = int.tryParse(value);
+          this.messageId = value;
           break;
       }
     }
